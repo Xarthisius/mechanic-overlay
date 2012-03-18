@@ -3,44 +3,30 @@
 # $Header: $
 
 EAPI=4
+
 inherit cmake-utils
 
 DESCRIPTION="The Arnoldweb module for Mechanic"
 HOMEPAGE="http://git.astri.umk.pl/projects/mechanic"
-SRC_URI="http://github.com/downloads/mslonina/Mechanic/mechanic_module_arnoldweb-0.12.1.tar.gz"
+SRC_URI="http://github.com/downloads/mslonina/MechanicModules/${P}.tar.gz"
 
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="config"
 
-RDEPEND="
-  sys-cluster/mechanic
-"
+DEPEND="sci-misc/mechanic
+	virtual/mpi
+	config? ( dev-libs/libreadconfig )"
+RDEPEND="${DEPEND}"
 
 pkg_setup() {
-  export CC=mpicc
-}
-
-src_prepare() {
-  base_src_prepare
+	export CC=mpicc
 }
 
 src_configure() {
-  if use config; then
-    local mycmakeargs=(
-      -DLRC:BOOL=ON
-    )
-  else
-    local mycmakeargs=(
-      -DLRC:BOOL=OFF
-    )
-  fi
-  cmake-utils_src_configure
+	local mycmakeargs=(
+		$(cmake-utils_use config LRC)
+	)
+	cmake-utils_src_configure
 }
-
-src_install() {
-  cmake-utils_src_install
-}
-
-
